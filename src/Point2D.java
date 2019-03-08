@@ -1,4 +1,6 @@
-public class Point2D {
+import java.io.Serializable;
+
+public class Point2D implements Serializable {
     public double x;
     public double y;
 

@@ -24,19 +24,18 @@ public class Server {
         server.run();
     }
 
-    public void run() {
-        while(true) {
-            try {
-                this.comm = this.conn.accept();
-            } catch (IOException e) {
-                System.out.println("Erreur lors de l'acceptation");
-            }
-
-            System.out.println("connexion acceptée");
-
-            this.read();
-        }
-    }
+//    public void run() {
+//        while(true) {
+//            try {
+//                this.comm = this.conn.accept();
+//                System.out.println("connexion acceptée");
+//                this.read();
+//                this.comm.close();
+//            } catch (IOException e) {
+//                System.out.println("Erreur lors de l'acceptation");
+//            }
+//        }
+//    }
 
     public void read() {
         try {
