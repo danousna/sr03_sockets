@@ -1,6 +1,6 @@
-import com.sun.xml.internal.fastinfoset.util.CharArray;
-
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
@@ -24,24 +24,30 @@ public class Server {
         server.run();
     }
 
-//    public void run() {
-//        while(true) {
-//            try {
-//                this.comm = this.conn.accept();
-//                System.out.println("connexion acceptée");
-//                this.read();
-//                this.comm.close();
-//            } catch (IOException e) {
-//                System.out.println("Erreur lors de l'acceptation");
-//            }
-//        }
-//    }
+    public void run() {
+        try {
+            this.comm = this.conn.accept();
+            System.out.println("connexion acceptée");
+
+            //this.comm.close();
+        } catch (IOException e) {
+            System.out.println("Erreur lors de l'acceptation");
+        }
+        while(!this.comm.isClosed()) {
+            this.read();
+        }
+    }
 
     public void read() {
         try {
             DataInputStream ins = new DataInputStream(this.comm.getInputStream());
             String[] data = ins.readUTF().split(",");
             int[] args = Arrays.stream(data).mapToInt(Integer::parseInt).toArray();
+            if (args[0] == 0) {
+                this.comm.close();
+                this.conn.close();
+                return;
+            }
             System.out.println("client à envoyé :" + args[0] + "," + args[1]);
             int result  = this.jeu_ordi(args[0], args[1]);
             this.send(result);

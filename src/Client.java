@@ -1,11 +1,9 @@
-import com.sun.tools.internal.ws.wsdl.document.Output;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
 public class Client {
-    public Socket comm;
+    public static Socket comm;
 
     public static void main(String[] args) {
         Client client = new Client();
@@ -79,6 +77,14 @@ public class Client {
             System.out.println ("\nVous avez gagné!\n");
         else
             System.out.println ("\nVous avez perdu!\n");
+
+        client.send(nb_allu_rest, nb_allu_max);
+
+        try {
+            comm.close();
+        } catch (IOException e) {
+            System.out.println("Erreur lors de la fermeture du socket de communication : " + e.getMessage());
+        }
     }
 
     public void connect() {
@@ -94,7 +100,7 @@ public class Client {
             DataInputStream ins = new DataInputStream(this.comm.getInputStream());
             return(ins.readInt());
         } catch (IOException e) {
-            System.out.println("Erreur lors de la lecture");
+            System.out.println("Erreur lors de la lecture : " + e.getMessage());
             return(-1);
         }
     }
@@ -104,7 +110,7 @@ public class Client {
             DataOutputStream outs = new DataOutputStream(this.comm.getOutputStream());
             outs.writeUTF(nb_allu_rest + "," + nb_allu_max);
         } catch (IOException e) {
-            System.out.println("Erreur lors de l'envoi");
+            System.out.println("Erreur lors de l'envoi : " + e.getMessage());
         }
     }
 
