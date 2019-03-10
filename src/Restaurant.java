@@ -11,8 +11,11 @@ public class Restaurant implements Serializable {
         this.pos = pos;
     }
 
-    public void print() {
-        System.out.println(this.nom);
-        this.pos.print();
+    public String getnom() {
+        return this.nom;
+    }
+
+    public Point2D getpos() {
+        return pos;
     }
 }
