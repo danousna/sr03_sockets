@@ -9,12 +9,13 @@ public class ClientRestaurant {
 
     public static void main(String[] args) {
         ClientRestaurant client = new ClientRestaurant();
-        Restaurant restaurantRecu;
-        Point2D position = new Point2D(5, 3);
+        Restaurant[] restaurantRecu;
+        Point2D position = new Point2D(13, 7);
         client.connect();
         client.send(position);
         restaurantRecu = client.read();
-        System.out.println("Le resto le plus proche est : " + restaurantRecu.getnom() + " avec une distance de " + restaurantRecu.getpos().distance(position) + " carrés");
+        for (int i = 0; i < restaurantRecu.length; ++i)
+            System.out.println("Resto " + (i+1) + " : " + restaurantRecu[i].getnom() + " avec une distance de " + Math.floor(restaurantRecu[i].getpos().distance(position)*100)/100 + " carrés. Téléphone : " + restaurantRecu[i].gettel());
     }
 
     public void connect() {
@@ -34,10 +35,10 @@ public class ClientRestaurant {
         }
     }
 
-    public Restaurant read() {
+    public Restaurant[] read() {
         try {
             ObjectInputStream ins = new ObjectInputStream(this.comm.getInputStream());
-            return (Restaurant)ins.readObject();
+            return (Restaurant[])ins.readObject();
         } catch(IOException e) {
             System.out.println("Erreur lors de la lecture");
         } catch (ClassNotFoundException e) {
