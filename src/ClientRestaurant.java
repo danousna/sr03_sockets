@@ -4,11 +4,16 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class ClientRestaurant {
-    private Socket comm;
+public class ClientRestaurant extends Client {
+    public Point2D position;
+    public Restaurant[] restaurants_recu;
+
+    public ClientRestaurant(int port) {
+        super(port);
+    }
 
     public static void main(String[] args) {
-        ClientRestaurant client = new ClientRestaurant();
+        ClientRestaurant client = new ClientRestaurant(10080);
         Scanner scanner = new Scanner(System.in);
         int continue_program = 1;
         int pos_x;
@@ -21,18 +26,17 @@ public class ClientRestaurant {
             System.out.println("y : ");
             pos_y = scanner.nextInt();
 
-            Restaurant[] restaurantRecu;
-            Point2D position = new Point2D(pos_x, pos_y);
-
-            client.connect();
-            client.send(position);
-
-            restaurantRecu = client.read();
+            client.position = new Point2D(pos_x, pos_y);
+            client.send();
+            client.read();
 
             System.out.printf("Voici les 3 restaurants les plus proches de votre position (%d, %d) : \n", pos_x, pos_y);
-            if (restaurantRecu != null) {
-                for (int i = 0; i < restaurantRecu.length; ++i)
-                    System.out.println("Resto " + (i+1) + " : " + restaurantRecu[i].getnom() + " avec une distance de " + Math.floor(restaurantRecu[i].getpos().distance(position)*100)/100 + " carrés. Téléphone : " + restaurantRecu[i].gettel());
+            if (client.restaurants_recu != null) {
+                for (int i = 0; i < client.restaurants_recu.length; ++i) {
+                    double distance = Math.floor(client.restaurants_recu[i].getpos().distance(client.position)*100)/100;
+                    String nom = client.restaurants_recu[i].getnom();
+                    System.out.println("Resto "+(i+1)+" : "+nom+" avec une distance de "+distance+" mètres.");
+                }
             } else {
                 System.out.println("Erreur, le message reçu n'est pas valide.\n");
             }
@@ -42,33 +46,24 @@ public class ClientRestaurant {
         }
     }
 
-    private void connect() {
+    public void send() {
         try {
-            this.comm = new Socket("localhost", 10080);
-        } catch (IOException e) {
-            System.out.println("Erreur, hôte inconnu");
-        }
-    }
-
-    private void send(Point2D point) {
-        try {
-            ObjectOutputStream outs = new ObjectOutputStream(this.comm.getOutputStream());
-            outs.writeObject(point);
+            ObjectOutputStream outs = new ObjectOutputStream(comm.getOutputStream());
+            outs.writeObject(position);
         } catch (IOException e) {
             System.out.println("Erreur lors de l'envoi");
         }
     }
 
-    private Restaurant[] read() {
+    public void read() {
         try {
-            ObjectInputStream ins = new ObjectInputStream(this.comm.getInputStream());
-            return (Restaurant[])ins.readObject();
+            ObjectInputStream ins = new ObjectInputStream(comm.getInputStream());
+            restaurants_recu = (Restaurant[])ins.readObject();
         } catch(IOException e) {
             System.out.println("Erreur lors de la lecture");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return null;
     }
 }
 
