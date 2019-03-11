@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.Scanner;
 
 public class ClientRestaurant extends Client {
@@ -19,7 +18,7 @@ public class ClientRestaurant extends Client {
         int pos_x;
         int pos_y;
 
-        while (continue_program == 1) {
+        while (continue_program == 1 && client.getcomm() != null) {
             System.out.println("Quel est votre position ?\n");
             System.out.println("x : ");
             pos_x = scanner.nextInt();
@@ -34,20 +33,24 @@ public class ClientRestaurant extends Client {
             if (client.restaurants_recu != null) {
                 for (int i = 0; i < client.restaurants_recu.length; ++i) {
                     double distance = Math.floor(client.restaurants_recu[i].getpos().distance(client.position)*100)/100;
+                    double x = client.restaurants_recu[i].getpos().x;
+                    double y = client.restaurants_recu[i].getpos().y;
                     String nom = client.restaurants_recu[i].getnom();
-                    System.out.println("Resto "+(i+1)+" : "+nom+" avec une distance de "+distance+" mètres.");
+                    System.out.printf("Resto "+(i+1)+" : "+nom+" (%1.2f, %1.2f) avec une distance de "+distance+" mètres. \n", x, y);
                 }
             } else {
                 System.out.println("Erreur, le message reçu n'est pas valide.\n");
             }
 
-            System.out.println("Réessayer ? (1 : Oui, 0 : Non");
+            System.out.println("Réessayer ? (1 : Oui, 0 : Non)");
             continue_program = scanner.nextInt();
         }
 
         // Close by sending null position
         client.position = null;
-        client.send();
+        if (client.getcomm() != null) {
+            client.send();
+        }
     }
 
     public void send() {
