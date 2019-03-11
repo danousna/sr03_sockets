@@ -6,8 +6,8 @@ public class ServerRestaurant extends Server {
     private Restaurant[] restaurants;
     private Restaurant[] closest_restaurants;
 
-    public ServerRestaurant() {
-        super();
+    public ServerRestaurant(int port) {
+        super(port);
 
         this.restaurants = new Restaurant[10];
         this.restaurants[0] = new Restaurant("Le Premier", "040508", new Point2D(1, 1));
@@ -23,7 +23,7 @@ public class ServerRestaurant extends Server {
     }
 
     public static void main(String[] args) {
-        ServerRestaurant server = new ServerRestaurant();
+        ServerRestaurant server = new ServerRestaurant(10080);
         server.run();
     }
 

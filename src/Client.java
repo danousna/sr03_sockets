@@ -8,7 +8,7 @@ abstract class Client {
         try {
             comm = new Socket("localhost", port);
         } catch (IOException e) {
-            System.out.println("Erreur, hôte inconnu");
+            System.out.println(e.getMessage());
         }
     }
 

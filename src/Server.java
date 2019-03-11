@@ -6,22 +6,22 @@ abstract class Server {
     protected ServerSocket conn;
     protected Socket comm;
 
-    public Server() {
+    public Server(int port) {
         try {
-            this.conn = new ServerSocket(10080);
+            this.conn = new ServerSocket(port);
         } catch (IOException e) {
-            System.out.println("Erreur lors de la création du serveur");
+            System.out.println(e.getMessage());
         }
     }
 
     protected void run() {
         try {
-            this.comm = this.conn.accept();
-            System.out.println("connexion acceptée");
+            comm = conn.accept();
+            System.out.println("Connexion acceptée");
         } catch (IOException e) {
-            System.out.println("Erreur lors de l'acceptation");
+            System.out.println(e.getMessage());
         }
-        while(!this.comm.isClosed()) {
+        while(!comm.isClosed()) {
             this.read();
         }
     }
