@@ -30,9 +30,15 @@ public class ServerRestaurant extends Server {
     public void read() {
         try {
             ObjectInputStream ins = new ObjectInputStream(this.comm.getInputStream());
-            Point2D pointClient = (Point2D)ins.readObject();
-            Restaurant[] closestRestos = closestRestos(pointClient);
-            closest_restaurants = closestRestos;
+            Point2D position = (Point2D)ins.readObject();
+
+            if (position == null) {
+               comm.close();
+               conn.close();
+               return;
+            }
+
+            closest_restaurants = closestRestos(position);
             this.send();
         } catch (IOException e) {
             System.out.println("Erreur lors de la lecture");

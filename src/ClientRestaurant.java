@@ -44,6 +44,10 @@ public class ClientRestaurant extends Client {
             System.out.println("Réessayer ? (1 : Oui, 0 : Non");
             continue_program = scanner.nextInt();
         }
+
+        // Close by sending null position
+        client.position = null;
+        client.send();
     }
 
     public void send() {
